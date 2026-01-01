@@ -295,7 +295,7 @@ void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t PinNumber, uint8_t Val
  * @Note              -
 
  */
-void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t value)
+void GPIO_WriteToOutputPort(GPIO_RegDef_t *pGPIOx, uint16_t Value)
 {
 	pGPIOx->ODR = Value;
 
