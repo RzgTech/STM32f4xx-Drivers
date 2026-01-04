@@ -9,7 +9,7 @@
 #include "stm32f407xx.h"
 
 #define HIGH					1
-#define BTN_PRESSES				HIGH
+#define BTN_PRESSED				HIGH
 
 void delay(void)
 {
@@ -44,7 +44,7 @@ int main(void)
 
 	while(1)
 	{
-		if (GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0) == BTN_PRESSES)
+		if (GPIO_ReadFromInputPin(GPIOA, GPIO_PIN_NO_0) == BTN_PRESSED)
 		{
 			delay();
 			GPIO_ToggleOutputPin(GPIOD, GPIO_PIN_NO_12);
