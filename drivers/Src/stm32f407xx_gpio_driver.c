@@ -140,10 +140,6 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 			EXTI->RTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 
 			EXTI->FTSR |= (1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-
-
-
-
 		}
 
 		//2. configure the GPIO port selection in SYSCFG_EXTICR
@@ -154,7 +150,7 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle)
 		uint8_t portcode = GPIO_BASE_ADDRESS_TO_CODE(pGPIOHandle->pGPIOx);
 
 		SYSCFG_PCLK_EN();
-		SYSCFG->EXTICR[temp1] &= ~(0xF << (4 * temp2)); //clearing
+		//SYSCFG->EXTICR[temp1] &= ~(0xF << (4 * temp2)); //clearing
 		SYSCFG->EXTICR[temp1] |= (portcode << (4 * temp2));
 
 
@@ -436,7 +432,7 @@ void GPIO_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi)
  */
 
 
-void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint8_t IRQPriority)
+void GPIO_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
 {
 	//1. first let's find the ipr register
 	uint8_t iprx = IRQNumber / 4;

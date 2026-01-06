@@ -266,7 +266,7 @@ typedef struct
  * Clock Enable Macros for SYSCFG peripherals
  */
 
-#define SYSCFG_PCLK_EN()			( RCC->APB1ENR |= (1<<14) )
+#define SYSCFG_PCLK_EN()			( RCC->APB2ENR |= (1<<14) )
 
 
 
@@ -352,6 +352,48 @@ typedef struct
  * NOTE: update these macros with valid values according to your MCU
  * TODO: You may complete this list for other peripherals
  */
+
+#define IRQ_NO_EXTI0 				6
+#define IRQ_NO_EXTI1 				7
+#define IRQ_NO_EXTI2 				8
+#define IRQ_NO_EXTI3 				9
+#define IRQ_NO_EXTI4 				10
+#define IRQ_NO_EXTI9_5 				23
+#define IRQ_NO_EXTI15_10 			40
+#define IRQ_NO_SPI1					35
+#define IRQ_NO_SPI2         		36
+#define IRQ_NO_SPI3         		51
+#define IRQ_NO_I2C1_EV     			31
+#define IRQ_NO_I2C1_ER     			32
+#define IRQ_NO_USART1	    		37
+#define IRQ_NO_USART2	    		38
+#define IRQ_NO_USART3	    		39
+#define IRQ_NO_UART4	    		52
+#define IRQ_NO_UART5	    		53
+#define IRQ_NO_USART6	    		71
+
+
+
+/*
+ * macros for all the possible priority levels
+ */
+
+#define NVIC_IRQ_PRI0    			0
+#define NVIC_IRQ_PRI1    			1
+#define NVIC_IRQ_PRI2    			2
+#define NVIC_IRQ_PRI3    			3
+#define NVIC_IRQ_PRI4    			4
+#define NVIC_IRQ_PRI5    			5
+#define NVIC_IRQ_PRI6    			6
+#define NVIC_IRQ_PRI7    			7
+#define NVIC_IRQ_PRI8    			8
+#define NVIC_IRQ_PRI9    			9
+#define NVIC_IRQ_PRI10    			10
+#define NVIC_IRQ_PRI11    			11
+#define NVIC_IRQ_PRI12    			12
+#define NVIC_IRQ_PRI13    			13
+#define NVIC_IRQ_PRI14    			14
+#define NVIC_IRQ_PRI15    			15
 
 //some generic macros
 
