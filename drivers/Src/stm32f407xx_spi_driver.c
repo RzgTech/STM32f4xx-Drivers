@@ -46,16 +46,55 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 
 
 
+/*********************************************************************
+ * @fn      		  - SPI_Init
+ *
+ * @brief             -
+ *
+ * @param[in]         -
+ * @param[in]         -
+ * @param[in]         -
+ *
+ * @return            -
+ *
+ * @Note              -
 
-
-
-
-
-/*
- * Peripheral Clock Setup
  */
 
 
+void SPI_Init(SPI_Handle_t *pSPIHandle)
+{
+	uint32_t tempreg = 0;
+
+	//1. configure the device mode
+
+	tempreg |= pSPIHandle->SPIConfig.SPI_DeviceMode << 2 ;
+
+	//2. Configure the bus config
+
+	if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_FD)
+	{
+		//bidi mode should be cleared
+		tempreg &= ~(1 << 15);
+
+	}else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_HD)
+	{
+		//bidi mode should be set
+		tempreg |= (1 << 15);
+
+	}else if (pSPIHandle->SPIConfig.SPI_BusConfig == SPI_BUS_CONFIG_SIMPLEX_RXONLY)
+	{
+		//bidi mode should be cleared
+		tempreg &= ~(1 << 15);
+
+		//RXONLY bit must be set
+		tempreg &= ~(1 << 10);
+
+	}
+
+
+
+}
 
 
 
