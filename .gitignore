@@ -1,0 +1,12 @@
+*.o
+*.d
+*.su
+*.cyclo
+*.elf
+*.list
+*.map
+*.bin
+*.hex
+*.mk
+*.launch
+*.prefs
