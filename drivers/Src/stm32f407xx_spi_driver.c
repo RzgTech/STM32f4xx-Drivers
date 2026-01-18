@@ -219,3 +219,30 @@ void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t Len)
 
 
 
+/*********************************************************************
+ * @fn      		  - SPI_PeripheralControl
+ *
+ * @brief             -
+ *
+ * @param[in]         -
+ * @param[in]         -
+ * @param[in]         -
+ *
+ * @return            -
+ *
+ * @Note              -
+
+ */
+
+void SPI_PeripheralControl(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+	if (EnOrDi == ENABLE)
+	{
+		pSPIx->CR1 |= (1 << SPI_CR1_SPE);
+	}else
+	{
+		pSPIx->CR1 &= ~(1 << SPI_CR1_SPE);
+	}
+
+}
+

@@ -72,6 +72,10 @@ int main(void)
 
 	SPI2_Inits();
 
+	//enable the SPI2 peripheral
+
+	SPI_PeripheralControl(SPI2, ENABLE);
+
 	SPI_SendData(SPI2, (uint8_t *)user_data, strlen(user_data));
 
 	while(1);
