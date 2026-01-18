@@ -31,7 +31,7 @@ typedef struct
 typedef struct
 {
 	//pointer to hold the base address of the GPIO peripheral
-	GPIO_RegDef_t *pSPIx;  		//This holds the base address of the SPIx(1,2,3)
+	SPI_RegDef_t *pSPIx;  		//This holds the base address of the SPIx(1,2,3)
 	SPI_Config_t SPIConfig;
 
 }SPI_Handle_t;
@@ -107,8 +107,8 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi);
  * Init and DeInit
  */
 
-void SPI_Init(GPIO_Handle_t *pSPI_Handle_t);
-void SPI_DeInit(GPIO_RegDef_t *pSPIx);
+void SPI_Init(SPI_Handle_t *pSPI_Handle_t);
+void SPI_DeInit(SPI_RegDef_t *pSPIx);
 
 
 /*
