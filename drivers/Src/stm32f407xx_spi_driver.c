@@ -73,6 +73,11 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 
 void SPI_Init(SPI_Handle_t *pSPIHandle)
 {
+
+	//enable the peripheral clock
+
+	SPI_PeriClockControl(pSPIHandle->pSPIx, ENABLE);
+
 	uint32_t tempreg = 0;
 
 	//1. configure the device mode
