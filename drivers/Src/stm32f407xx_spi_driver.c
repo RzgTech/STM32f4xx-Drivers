@@ -40,7 +40,16 @@ void SPI_PeriClockControl(SPI_RegDef_t *pSPIx, uint8_t EnorDi)
 	}
 	else
 	{
-		//
+		if(pSPIx == SPI1)
+		{
+			SPI1_PCLK_DI();
+		} else if (pSPIx == SPI2)
+		{
+			SPI2_PCLK_DI();
+		} else if (pSPIx == SPI3)
+		{
+			SPI3_PCLK_DI();
+		}
 	}
 }
 
@@ -118,7 +127,55 @@ void SPI_Init(SPI_Handle_t *pSPIHandle)
 }
 
 
+/*********************************************************************
+ * @fn      		  - SPI_DeInit
+ *
+ * @brief             -
+ *
+ * @param[in]         -
+ * @param[in]         -
+ * @param[in]         -
+ *
+ * @return            -
+ *
+ * @Note              -
 
+ */
+void SPI_DeInit(SPI_RegDef_t *pSPIx)
+{
+	if(pSPIx == SPI1)
+	{
+		SPI1_REG_RESET();
+	} else if (pSPIx == SPI2)
+	{
+		SPI2_REG_RESET();
+	} else if (pSPIx == SPI3)
+	{
+		SPI3_REG_RESET();
+	}
+}
+
+
+/*********************************************************************
+ * @fn      		  - SPI_SendData
+ *
+ * @brief             -
+ *
+ * @param[in]         -
+ * @param[in]         -
+ * @param[in]         -
+ *
+ * @return            -
+ *
+ * @Note              - This is blocking call i.e. the function call waits until all the bytes are transmitted
+
+ */
+void SPI_SendData(SPI_RegDef_t *pSPIx,uint8_t *pTxBuffer, uint32_t Len)
+{
+
+
+
+}
 
 
 

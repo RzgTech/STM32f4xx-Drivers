@@ -347,7 +347,7 @@ typedef struct
  * Macros to reset GPIOx peripherals
  */
 
-#define GPIOA_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<0);  RCC->AHB1RSTR &= ~(1<<0); }while(0)
+#define GPIOA_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<0);  RCC->AHB1RSTR &= ~(1<<0); }while(0)  //first we need to set and then reset
 #define GPIOB_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<1);  RCC->AHB1RSTR &= ~(1<<1); }while(0)
 #define GPIOC_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<2);  RCC->AHB1RSTR &= ~(1<<2); }while(0)
 #define GPIOD_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<3);  RCC->AHB1RSTR &= ~(1<<3); }while(0)
@@ -356,6 +356,15 @@ typedef struct
 #define GPIOG_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<6);  RCC->AHB1RSTR &= ~(1<<6); }while(0)
 #define GPIOH_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<7);  RCC->AHB1RSTR &= ~(1<<7); }while(0)
 #define GPIOI_REG_RESET()			do{ RCC->AHB1RSTR |= (1<<8);  RCC->AHB1RSTR &= ~(1<<8); }while(0)
+
+
+/*
+ * Macros to reset SPIx peripherals
+ */
+
+#define SPI1_REG_RESET()			do{ RCC->APB2RSTR |= (12<<0);  RCC->APB2RSTR &= ~(12<<0); }while(0)
+#define SPI2_REG_RESET()			do{ RCC->APB1RSTR |= (14<<0);  RCC->APB1RSTR &= ~(14<<0); }while(0)
+#define SPI3_REG_RESET()			do{ RCC->APB1RSTR |= (15<<0);  RCC->APB1RSTR &= ~(15<<0); }while(0)
 
 
 /*
