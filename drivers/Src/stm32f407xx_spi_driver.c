@@ -171,6 +171,33 @@ uint8_t SPI_GetFlagStatus(SPI_RegDef_t *pSPIx, uint32_t FlagName)
 	return FLAG_RESET;
 }
 
+
+/*********************************************************************
+ * @fn      		  - SPI_SSIConfig
+ *
+ * @brief             -
+ *
+ * @param[in]         -
+ * @param[in]         -
+ * @param[in]         -
+ *
+ * @return            -
+ *
+ * @Note              -
+
+ */
+void  SPI_SSIConfig(SPI_RegDef_t *pSPIx, uint8_t EnOrDi)
+{
+	if(EnOrDi == ENABLE)
+	{
+		pSPIx->CR1 |=  (1 << SPI_CR1_SSI);
+	}else
+	{
+		pSPIx->CR1 &=  ~(1 << SPI_CR1_SSI);
+	}
+
+}
+
 /*********************************************************************
  * @fn      		  - SPI_SendData
  *
