@@ -79,7 +79,14 @@ int main(void)
 
 	SPI_PeripheralControl(SPI2, ENABLE);
 
+	//first send length information
+	uint8_t dataLen = strlen(user_data);
+	SPI_SendData(SPI2,&dataLen,1);
+
 	SPI_SendData(SPI2, (uint8_t *)user_data, strlen(user_data));
+
+	//lets confirm SPI is not busy
+	while(SPI_GetFlagStatus(SPI2, SPI_BUSY_FLAG));
 
 	//disable the SPI Peripheral
 	SPI_PeripheralControl(SPI2, DISABLE);
