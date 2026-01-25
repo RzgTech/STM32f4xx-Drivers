@@ -7,6 +7,7 @@
 
 
 #include<string.h>
+#include<stdio.h>
 #include "stm32f407xx.h"
 
 
@@ -106,7 +107,7 @@ void GPIO_BtnInit()
 	GPIO_Init(&GpioBtn);
 }
 
-uint8_t SPI_VerifyResponse(ackbyte)
+uint8_t SPI_VerifyResponse(uint8_t ackbyte)
 {
 	if (ackbyte == 0xf5)
 	{
@@ -219,6 +220,54 @@ int main(void)
 			uint8_t analog_read;
 			SPI_ReceiveData(SPI2, &analog_read, 1);
 		}
+		//end of CMD_SENOSR_READ
+
+		//3. CMD_LED_READ 	 <pin no(1) >
+
+		//wait until button is pressed
+		while (! GPIO_ReadFromInputPin(GPIOA,GPIO_PIN_NO_0));
+
+		//to avoid button de-bouncing issues
+		delay();
+
+		commndcode = COMMAND_LED_READ;
+
+		//send command
+		SPI_SendData(SPI2, &commndcode, 1);
+
+		//do dummy read to clear off the RXNE
+		SPI_ReceiveData(SPI2, &dummy_read, 1);
+
+		//Send some dummy byte to fetch the response from the slave
+		SPI_SendData(SPI2, &dummy_write, 1);
+
+		//read the ack byte received
+		SPI_ReceiveData(SPI2, &ackbyte, 1);
+
+		if (SPI_VerifyResponse(ackbyte))
+		{
+
+			args[0] = LED_PIN;
+			//send arguments
+			SPI_SendData(SPI2, args, 1);
+			//do dummy read to clear off the RXNE
+			SPI_ReceiveData(SPI2, &dummy_read, 1);
+
+			//insert some delay so that slave can ready with the data
+			delay();
+
+			//Send some dummy bits (1 byte) fetch the response from the slave
+			SPI_SendData(SPI2, &dummy_write, 1);
+
+			uint8_t led_status;
+
+			SPI_ReceiveData(SPI2, &led_status, 1);
+
+			printf("COMMAND_READ_LED %d\n",led_status);
+
+		}
+		//End of CMD_LED_READ
+
 
 		//lets confirm SPI is not busy
 		while( SPI_GetFlagStatus(SPI2, SPI_BUSY_FLAG));
@@ -226,6 +275,11 @@ int main(void)
 		//disable the SPI Peripheral
 		SPI_PeripheralControl(SPI2, DISABLE);
 	}
+
+
+
+
+
 
 
 	return 0;
