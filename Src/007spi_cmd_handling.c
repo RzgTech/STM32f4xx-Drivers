@@ -142,9 +142,12 @@ int main(void)
 	while(1)
 	{
 
+		//wait until button is pressed
 		while (! GPIO_ReadFromInputPin(GPIOA,GPIO_PIN_NO_0));
 
+		//to avoid button de-bouncing issues
 		delay();
+
 		//enable the SPI2 peripheral
 
 		SPI_PeripheralControl(SPI2, ENABLE);
@@ -173,6 +176,48 @@ int main(void)
 			args[1] = LED_ON;
 
 			SPI_SendData(SPI2, args, 2);
+		}
+		//End of COMMAND_LED_CTRL
+
+		//2. CMD_SENOSR_READ   <analog pin number(1) >
+
+		//wait until button is pressed
+		while (! GPIO_ReadFromInputPin(GPIOA,GPIO_PIN_NO_0));
+
+		//to avoid button de-bouncing issues
+		delay();
+
+		commndcode = COMMAND_SENSOR_READ;
+
+		SPI_SendData(SPI2, &commndcode, 1); //slave receives this, if it supports it, it sends ACK, o.w, NACK
+
+		//do dummy read to clear off the RXNE
+		SPI_ReceiveData(SPI2, &dummy_read, 1);
+
+		//send some dummy bits (1 byte) fetch the response from the slave
+		SPI_SendData(SPI2, &dummy_write, 1);
+
+		//read the ack byte received
+		SPI_ReceiveData(SPI2, &ackbyte, 1);
+
+		if (SPI_VerifyResponse(ackbyte))
+		{
+			//send arguments
+			args[0] = ANALOG_PIN0;
+
+			SPI_SendData(SPI2, args, 1);
+
+			//Do dummy read to clear off the RXNE
+			SPI_ReceiveData(SPI2, &dummy_read, 1);
+
+			//some delay to make slave ready with the data after the ADC conversion
+			delay();
+
+			//send some dummy bits (1 byte) fetch the response from the slave
+			SPI_SendData(SPI2, &dummy_write, 1);
+
+			uint8_t analog_read;
+			SPI_ReceiveData(SPI2, &analog_read, 1);
 		}
 
 		//lets confirm SPI is not busy
