@@ -33,6 +33,12 @@ typedef struct
 	//pointer to hold the base address of the GPIO peripheral
 	SPI_RegDef_t *pSPIx;  		//This holds the base address of the SPIx(1,2,3)
 	SPI_Config_t SPIConfig;
+	uint8_t pTxBuffer;
+	uint8_t pRxBuffer;
+	uint32_t TxLen;
+	uint32_t RxLen;
+	uint8_t TxState;
+	uint8_t RxState;
 
 }SPI_Handle_t;
 
@@ -100,6 +106,13 @@ typedef struct
 #define SPI_RXNE_FLAG   								( 1 << SPI_SR_RXNE)
 #define SPI_BUSY_FLAG   								( 1 << SPI_SR_BSY)
 
+/*
+ * SPI Application Status
+ */
+
+#define SPI_READY										0
+#define SPI_BUSY_IN_RX									1
+#define SPI_BUSY_IN_TX									2
 
 
 /*****************************************************************************************
