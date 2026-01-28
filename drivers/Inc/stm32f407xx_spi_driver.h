@@ -33,8 +33,8 @@ typedef struct
 	//pointer to hold the base address of the GPIO peripheral
 	SPI_RegDef_t *pSPIx;  		//This holds the base address of the SPIx(1,2,3)
 	SPI_Config_t SPIConfig;
-	uint8_t pTxBuffer;
-	uint8_t pRxBuffer;
+	uint8_t *pTxBuffer;
+	uint8_t *pRxBuffer;
 	uint32_t TxLen;
 	uint32_t RxLen;
 	uint8_t TxState;
@@ -141,8 +141,8 @@ void SPI_DeInit(SPI_RegDef_t *pSPIx);
 void SPI_SendData(SPI_RegDef_t *pSPIx, uint8_t *pTxBuffer, uint32_t len);  //length should be always 32 or higher
 void SPI_ReceiveData(SPI_RegDef_t *pSPIx, uint8_t *pRxBuffer, uint32_t len);
 
-void SPI_SendDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t len);
-void SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t len);
+uint8_t SPI_SendDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pTxBuffer, uint32_t len);
+uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t len);
 
 
 /*
