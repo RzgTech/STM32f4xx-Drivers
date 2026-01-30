@@ -477,5 +477,44 @@ uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t
 
 }
 
+void SPI_IRQHandling(SPI_Handle_t *pHandle)
+{
+	uint8_t temp1, temp2;
+
+	//first lets check for TXE
+	temp1 = pHandle->pSPIx->SR & (1 << SPI_SR_TXE);
+
+	temp2 = pHandle->pSPIx->CR2 & (1 << SPI_CR2_TXEIE);
+
+	if (temp1 && temp2)
+	{
+		//handle TXE
+		spi_txe_interrupt_handle();
+	}
+
+	//check for RXNE
+	temp1 = pHandle->pSPIx->SR & (1 << SPI_SR_RXNE);
+
+	temp2 = pHandle->pSPIx->CR2 & (1 << SPI_CR2_RXNEIE);
+
+	if (temp1 && temp2)
+	{
+		//handle RXNE
+		spi_rxne_interrupt_handle();
+	}
+
+	//check for ovr flag
+	temp1 = pHandle->pSPIx->SR & (1 << SPI_SR_OVR);
+
+	temp2 = pHandle->pSPIx->CR2 & (1 << SPI_CR2_ERRIE);
+
+	if (temp1 && temp2)
+	{
+		//handle RXNE
+		spi_ovr_err_interrupt_handle();
+	}
+
+
+}
 
 
