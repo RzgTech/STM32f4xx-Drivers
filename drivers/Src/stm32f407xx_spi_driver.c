@@ -8,6 +8,11 @@
 #include "stm32f407xx.h"
 #include "stm32f407xx_spi_driver.h"
 
+
+static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle);
+static void spi_rxne_interrupt_handle(SPI_Handle_t *pSPIHandle);
+static void spi_ovr_err_interrupt_handle(SPI_Handle_t *pSPIHandle);
+
 /*********************************************************************
  * @fn      		  - SPI_PeriClockControl
  *
@@ -477,6 +482,8 @@ uint8_t SPI_ReceiveDataIT(SPI_Handle_t *pSPIHandle, uint8_t *pRxBuffer, uint32_t
 
 }
 
+
+
 void SPI_IRQHandling(SPI_Handle_t *pHandle)
 {
 	uint8_t temp1, temp2;
@@ -489,7 +496,7 @@ void SPI_IRQHandling(SPI_Handle_t *pHandle)
 	if (temp1 && temp2)
 	{
 		//handle TXE
-		spi_txe_interrupt_handle();
+		spi_txe_interrupt_handle(pHandle);
 	}
 
 	//check for RXNE
@@ -500,7 +507,7 @@ void SPI_IRQHandling(SPI_Handle_t *pHandle)
 	if (temp1 && temp2)
 	{
 		//handle RXNE
-		spi_rxne_interrupt_handle();
+		spi_rxne_interrupt_handle(pHandle);
 	}
 
 	//check for ovr flag
@@ -511,10 +518,70 @@ void SPI_IRQHandling(SPI_Handle_t *pHandle)
 	if (temp1 && temp2)
 	{
 		//handle RXNE
-		spi_ovr_err_interrupt_handle();
+		spi_ovr_err_interrupt_handle(pHandle);
 	}
 
 
+}
+
+static void spi_txe_interrupt_handle(SPI_Handle_t *pSPIHandle)
+{
+			//2. Check the DFF bit in CR1
+			if (pSPIHandle->pSPIx->CR1 & (1 << SPI_CR1_DFF))
+			{
+				//16 bit DFF
+				//1. load the data into the DR
+				pSPIHandle->pSPIx->DR = *((uint16_t *)pSPIHandle->pTxBuffer);
+				pSPIHandle->TxLen--;
+				pSPIHandle->TxLen--;
+				(uint16_t *)pSPIHandle->pTxBuffer++;
+
+			}else
+			{
+				//8 bit DFF
+				//1. load the data into the DR
+				pSPIHandle->pSPIx->DR = *pSPIHandle->pTxBuffer;
+				pSPIHandle->TxLen--;
+				pSPIHandle->pTxBuffer++;
+
+			}
+
+			if (!pSPIHandle->TxLen)
+			{
+				//TxLen is zero, so close the spi transmission and inform the application that
+				//Tx is over.
+				//this prevents interrupts from setting up of TXE flag
+				pSPIHandle->pSPIx->CR2 &= ~(1 << SPI_CR2_TXEIE);
+				pSPIHandle->pTxBuffer = NULL;
+				pSPIHandle->TxLen = 0;
+				pSPIHandle->TxState = SPI_READY;
+				SPI_ApplicationEventCallback(pSPIHandle, SPI_EVENT_TX_CMPLT);
+
+			}
+
+}
+
+
+
+static void spi_rxne_interrupt_handle(SPI_Handle_t *pHandle)
+{
+
+
+}
+
+
+static void spi_ovr_err_interrupt_handle(SPI_Handle_t *pHandle)
+{
+
+
+}
+
+
+
+__weak void SPI_ApplicationEventCallback(SPI_Handle_t *pSPIHandle, uint8_t AppEv)
+{
+
+	//This is a weak implementation . the user application may override this function.
 }
 
 
