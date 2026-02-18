@@ -58,6 +58,52 @@ typedef struct
 
 
 
+/*****************************************************************************************
+ * 						APIS supported by this driver
+ * 			For more information about the APIs check the function definitions
+ *****************************************************************************************/
+
+/*
+ * Peripheral clock setup
+ */
+
+void I2C_PeriClockControl(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
+
+/*
+ * Init and DeInit
+ */
+
+void I2C_Init(I2C_Handle_t *pI2C_Handle_t);
+void I2C_DeInit(I2C_RegDef_t *pI2Cx);
+
+
+/*
+ * Data Send and Receive
+ */
+
+
+
+
+/*
+ * IRQ COnfiguration and ISR handling
+ */
+
+void I2C_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
+void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
+
+/*
+ * Other Peripheral Control APIs
+ */
+
+void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi);
+uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx , uint32_t FlagName);
+
+/*
+ * Application callback
+ */
+void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle,uint8_t AppEv);  //this should be implemented by the application
+
+
 
 
 
