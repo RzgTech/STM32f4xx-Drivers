@@ -584,6 +584,7 @@ typedef struct
 
 #include "stm32f407xx_gpio_driver.h"  //these include help us when writing codes in application layer. bcs we dont need to include them in the appl. layer anymore
 #include "stm32f407xx_spi_driver.h"
+#include "stm32f407xx_i2c_driver.h"
 
 
 
