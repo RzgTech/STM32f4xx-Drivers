@@ -10,6 +10,7 @@
 
 uint16_t AHB_PreScaler[8] = {2, 4, 8, 16, 64, 128, 256, 512};
 uint8_t APB1_PreScaler[4] = {2, 4, 8, 16};
+static void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx);
 
 /*********************************************************************
  * @fn      		  - I2C_PeripheralControl
@@ -194,10 +195,36 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 
 	}
 
-	tempreg |= ccr_value & 0xFFF;
+	tempreg |= (ccr_value & 0xFFF);
+
+	pI2CHandle->pI2Cx->CCR = tempreg;
 
 }
 
+
+void I2C_DeInit(I2C_RegDef_t *pI2Cx)
+{
+
+}
+
+void I2C_MasterSendData(I2C_Handle_t *pI2C_Handle_t, uint8_t *pTxBuffer, uint32_t Len, uint8_t SlaveAddr)
+{
+	//1. Generate the START condition
+	I2C_GenerateStartCondition(pI2C_Handle_t->pI2Cx);
+
+	//2. confirm that start generation is completed by checking the SB flag in the SR1
+	//   Note: Until SB is cleared SCL will be stretched (pulled to LOW)
+	while(I2C_GetFlagStatus(pI2C_Handle_t->pI2Cx, I2C_FLAG_SB))
+	{
+
+	}
+
+}
+
+static void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx)  //we use static bcs it is private to this driver
+{
+	pI2Cx->CR1 |= (1 << I2C_CR1_START);
+}
 
 
 
