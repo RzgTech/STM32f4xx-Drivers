@@ -185,7 +185,6 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 {
 	uint32_t tempreg = 0;
 
-
 	//ack control bit
 	tempreg |= (pI2CHandle->I2C_Config.I2C_ACKControl << 10);
 	pI2CHandle->pI2Cx->CR1 = tempreg;   //the reset value of the register is 0 so we can use "="
@@ -228,6 +227,21 @@ void I2C_Init(I2C_Handle_t *pI2CHandle)
 	tempreg |= (ccr_value & 0xFFF);
 
 	pI2CHandle->pI2Cx->CCR = tempreg;
+
+	//T_rise configurations
+	if (pI2CHandle->I2C_Config.I2C_SCLSpeed == I2C_SCLSpeed_SM)
+	{
+		//mode is standard mode
+		tempreg = (RCC_GetPCLK1Value() / 1000000U) + 1;   //we add 1 according to the ref. manual -> (F_pclk1 * T_rise(max))+1
+
+	}else
+	{
+		//mode is fast mode
+		tempreg = ((RCC_GetPCLK1Value() * 300)/ 1000000U) + 1;
+
+	}
+
+	pI2CHandle->pI2Cx->TRISE = (tempreg & 0x3F); //3F bcs we are masking 6 bits
 
 }
 
