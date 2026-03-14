@@ -91,6 +91,9 @@ int main(void)
 	//enable the i2c peripheral
 	I2C_PeripheralControl(I2C1, ENABLE);
 
+	//ack bit is made 1 after PE = 1
+	I2C_ManageAcking(I2C1, ENABLE);
+
 	while(1)
 	{
 		//wait until button is pressed

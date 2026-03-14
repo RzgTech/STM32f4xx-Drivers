@@ -338,20 +338,18 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2C_Handle_t, uint8_t *pRxbuffer, uint
 		//1. Disable Acking
 		I2C_ManageAcking(pI2C_Handle_t->pI2Cx, I2C_ACK_DISABLE);
 
-		//2. Generate STOP condition
-		I2C_GenerateStopCondition(pI2C_Handle_t->pI2Cx);
-
-		//3. clear the ADDR flag according to its software sequence
+		//2. clear the ADDR flag according to its software sequence
 		//   Note: Until ADDR is cleared SCL will be stretched (pulled to LOW)
 		I2C_ClearADDRFlag(pI2C_Handle_t->pI2Cx);
 
-		//4. wait until RXNE = 1
+		//3. wait until RXNE = 1
 		while (! I2C_GetFlagStatus(pI2C_Handle_t->pI2Cx, SPI_FLAG_RXNE));
+
+		//4. Generate STOP condition
+		I2C_GenerateStopCondition(pI2C_Handle_t->pI2Cx);
 
 		//5. Read data in the buffer DR
 		*pRxbuffer = pI2C_Handle_t->pI2Cx->DR;
-
-		return;
 	}
 
 	//Procedure to read data from slave when len > 1
