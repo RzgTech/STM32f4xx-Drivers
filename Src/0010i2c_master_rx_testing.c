@@ -104,12 +104,12 @@ int main(void)
 
 		command_code = 0x51;
 
-		I2C_MasterSendData(&I2C1Handle, &command_code, 1, SLAVE_ADDR);
-		I2C_MasterReceiveData(&I2C1Handle, &len, 1, SLAVE_ADDR);
+		I2C_MasterSendData(&I2C1Handle, &command_code, 1, SLAVE_ADDR, I2C_ENABLE_SR);
+		I2C_MasterReceiveData(&I2C1Handle, &len, 1, SLAVE_ADDR, I2C_ENABLE_SR);
 
 		command_code = 0x52;
-		I2C_MasterSendData(&I2C1Handle, &command_code, 1, SLAVE_ADDR);
-		I2C_MasterReceiveData(&I2C1Handle, rcv_buf, len, SLAVE_ADDR);
+		I2C_MasterSendData(&I2C1Handle, &command_code, 1, SLAVE_ADDR, I2C_ENABLE_SR);
+		I2C_MasterReceiveData(&I2C1Handle, rcv_buf, len, SLAVE_ADDR, I2C_DISABLE_SR);
 
 
 
