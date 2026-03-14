@@ -79,6 +79,7 @@ void GPIO_BtnInit()
 int main(void)
 {
 
+	GPIO_BtnInit();
 	//I2C pin inits
 	I2C1_GPIOInits();
 
