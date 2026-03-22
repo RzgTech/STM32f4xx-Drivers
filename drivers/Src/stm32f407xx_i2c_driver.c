@@ -609,6 +609,12 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2C_Handle_t)
 	if (temp1 && temp3)
 	{
 		//STOPF flag is set
+		//clear the STOPD (based on RM: 1) read SR1 2) write to CR1)
+		//1) read SR1: is already done in temp 3 = ...
+		pI2C_Handle_t->pI2Cx->CR2 |= 0x0000; //write to CR1 (we cannot write any value to it so we or with 0 to not chnage the values)
+
+		//notify the application that STOPF is detected
+		I2C_ApplicationEventCallback(pI2C_Handle_t, I2C_EV_STOP);
 	}
 
 	temp3 = (pI2C_Handle_t->pI2Cx->SR1) & (1 << I2C_SR1_TXE);
