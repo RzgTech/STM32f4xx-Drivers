@@ -13,8 +13,11 @@ uint8_t APB1_PreScaler[4] = {2, 4, 8, 16};
 static void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx);
 static void I2C_ExecuteAddressPhaseWrite(I2C_RegDef_t *pI2Cx, uint8_t SlaveAddr);
 static void I2C_ExecuteAddressPhaseRead(I2C_RegDef_t *pI2Cx, uint8_t SlaveAddr);
-static void I2C_ClearADDRFlag(I2C_RegDef_t *pI2Cx);
+static void I2C_ClearADDRFlag(I2C_Handle_t *pI2CHandle);
 static void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx);
+
+static void I2C_MasterHandleTXEInterrupt(I2C_Handle_t *pI2C_Handle_t);
+static void I2C_MasterHandleRXNEInterrupt(I2C_Handle_t *pI2C_Handle_t);
 
 static void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx)  //we use static bcs it is private to this driver
 {
@@ -329,7 +332,7 @@ void I2C_MasterSendData(I2C_Handle_t *pI2C_Handle_t, uint8_t *pTxbuffer, uint32_
 
 	//5. clear the ADDR flag according to its software sequence
 	//   Note: Until ADDR is cleared SCL will be stretched (pulled to LOW)
-	I2C_ClearADDRFlag(pI2C_Handle_t->pI2Cx);
+	I2C_ClearADDRFlag(pI2C_Handle_t);
 
 	//6. send the data until len becomes 0
 
@@ -375,7 +378,7 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2C_Handle_t, uint8_t *pRxbuffer, uint
 
 		//2. clear the ADDR flag according to its software sequence
 		//   Note: Until ADDR is cleared SCL will be stretched (pulled to LOW)
-		I2C_ClearADDRFlag(pI2C_Handle_t->pI2Cx);
+		I2C_ClearADDRFlag(pI2C_Handle_t);
 
 		//3. wait until RXNE = 1
 		while (! I2C_GetFlagStatus(pI2C_Handle_t->pI2Cx, SPI_FLAG_RXNE));
@@ -392,7 +395,7 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2C_Handle_t, uint8_t *pRxbuffer, uint
 	if(Len > 1)
 	{
 		// clear ADDR flag
-		I2C_ClearADDRFlag(pI2C_Handle_t->pI2Cx);
+		I2C_ClearADDRFlag(pI2C_Handle_t);
 
 		//read the data until Len is zero
 		for(uint32_t i = Len; i > 0; i--)
@@ -555,7 +558,7 @@ void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
 }
 
 
-void I2C_MasterHandleTXEInterrupt(I2C_Handle_t *pI2C_Handle_t)
+static void I2C_MasterHandleTXEInterrupt(I2C_Handle_t *pI2C_Handle_t)
 {
 	if (pI2C_Handle_t->TxLen > 0)
 	{
@@ -570,7 +573,7 @@ void I2C_MasterHandleTXEInterrupt(I2C_Handle_t *pI2C_Handle_t)
 	}
 }
 
-void I2C_MasterHandleRXNEInterrupt(I2C_Handle_t *pI2C_Handle_t)
+static void I2C_MasterHandleRXNEInterrupt(I2C_Handle_t *pI2C_Handle_t)
 {
 	//we have to do the data reception
 	if (pI2C_Handle_t->RxSize == 1)
@@ -602,11 +605,44 @@ void I2C_MasterHandleRXNEInterrupt(I2C_Handle_t *pI2C_Handle_t)
 		if (pI2C_Handle_t->Sr == I2C_DISABLE_SR)
 			I2C_GenerateStopCondition(pI2C_Handle_t->pI2Cx);
 		//2. close I2C rx
-		I2C_CloseReceiveData();
+		I2C_CloseReceiveData(pI2C_Handle_t);
 
 		//3. Notify the application
 		I2C_ApplicationEventCallback(pI2C_Handle_t, I2C_EV_RX_CMPLT);
 	}
+}
+
+void I2C_CloseReceiveData(I2C_Handle_t *pI2CHandle)
+{
+	//Implement the code to disable ITBUFEN Control Bit
+	pI2CHandle->pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITBUFEN);
+
+	//Implement the code to disable ITEVFEN Control Bit
+	pI2CHandle->pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITEVTEN);
+
+	pI2CHandle->TxRxState = I2C_READY;
+	pI2CHandle->pRxBuffer = NULL;
+	pI2CHandle->RxLen = 0;
+	pI2CHandle->RxSize = 0;
+
+	if(pI2CHandle->I2C_Config.I2C_ACKControl == I2C_ACK_ENABLE)
+	{
+		I2C_ManageAcking(pI2CHandle->pI2Cx,ENABLE);
+	}
+}
+
+void I2C_CloseSendData(I2C_Handle_t *pI2CHandle)
+{
+	//Implement the code to disable ITBUFEN Control Bit
+	pI2CHandle->pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITBUFEN);
+
+	//Implement the code to disable ITEVFEN Control Bit
+	pI2CHandle->pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITEVTEN);
+
+
+	pI2CHandle->TxRxState = I2C_READY;
+	pI2CHandle->pTxBuffer = NULL;
+	pI2CHandle->TxLen = 0;
 }
 
 /*********************************************************************
@@ -657,7 +693,7 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2C_Handle_t)
 	if (temp1 && temp3)
 	{
 		//Interrupt is generated bcs of ADDR event
-		I2C_ClearADDRFlag(pI2C_Handle_t->pI2Cx);
+		I2C_ClearADDRFlag(pI2C_Handle_t);
 	}
 
 	temp3 = (pI2C_Handle_t->pI2Cx->SR1) & (1 << I2C_SR1_BTF);
@@ -677,7 +713,7 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2C_Handle_t)
 					if (pI2C_Handle_t->Sr == I2C_DISABLE_SR)
 						I2C_GenerateStopCondition(pI2C_Handle_t->pI2Cx);
 					//2. Reset all the member elements of the handle structure
-					I2C_CloseSendDate();
+					I2C_CloseSendData(pI2C_Handle_t);
 
 					//3. Notify the application about transmission complete
 					I2C_ApplicationEventCallback(pI2C_Handle_t, I2C_EV_TX_CMPL);
