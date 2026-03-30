@@ -96,7 +96,7 @@ typedef struct
 
 #define I2C_EV_TX_CMPL									0
 #define I2C_EV_STOP										1
-#define I2C_EV_RX_CMPLT									2
+#define I2C_EV_RX_CMPL									2
 
 #define I2C_ERROR_BERR  								3
 #define I2C_ERROR_ARLO  								4
@@ -153,6 +153,7 @@ void I2C_ER_IRQHandling(I2C_Handle_t *pI2C_Handle_t);
 void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi);
 uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx , uint32_t FlagName);
 void I2C_ManageAcking(I2C_RegDef_t *pI2Cx, uint8_t EnorDi);
+void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx);
 
 /*
  * Application callback
