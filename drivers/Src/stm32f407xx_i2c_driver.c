@@ -770,6 +770,15 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2C_Handle_t)
 			{
 				I2C_MasterHandleTXEInterrupt(pI2C_Handle_t);
 			}
+		}else
+		{
+			//slave
+			//make sure the slave is really in transmitter mode
+			if (pI2C_Handle_t->pI2Cx->SR2 & (1 << I2C_SR2_TRA))
+			{
+
+				I2C_ApplicationEventCallback(pI2C_Handle_t, I2C_EV_DATA_REQ);
+			}
 		}
 
 	}
@@ -786,6 +795,16 @@ void I2C_EV_IRQHandling(I2C_Handle_t *pI2C_Handle_t)
 			if (pI2C_Handle_t->TxRxState == I2C_BUSY_IN_RX)
 			{
 				I2C_MasterHandleRXNEInterrupt(pI2C_Handle_t);
+			}
+
+		}else
+		{
+			//slave
+			//make sure the slave is really in receiver mode
+			if (pI2C_Handle_t->pI2Cx->SR2 & (1 << I2C_SR2_TRA))
+			{
+
+				I2C_ApplicationEventCallback(pI2C_Handle_t, I2C_EV_DATA_RCV);
 			}
 
 		}
