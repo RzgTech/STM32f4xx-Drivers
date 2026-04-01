@@ -87,6 +87,21 @@ void I2C_GenerateStopCondition(I2C_RegDef_t *pI2Cx)
 	pI2Cx->CR1 |= (1 << I2C_CR1_STOP);
 }
 
+void I2C_SlaveEnableDisableCallbackEvents(I2C_RegDef_t *pI2Cx, uint8_t EnorDi)
+{
+	if (EnorDi == ENABLE)
+	{
+		pI2Cx->CR2 |= ( 1 << I2C_CR2_ITBUFEN);
+		pI2Cx->CR2 |= ( 1 << I2C_CR2_ITEVTEN);
+		pI2Cx->CR2 |= ( 1 << I2C_CR2_ITERREN);
+	}else
+	{
+		pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITBUFEN);
+		pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITEVTEN);
+		pI2Cx->CR2 &= ~( 1 << I2C_CR2_ITERREN);
+	}
+}
+
 
 /*********************************************************************
  * @fn      		  - I2C_PeripheralControl
