@@ -287,6 +287,14 @@ typedef struct
 #define I2C2						((I2C_RegDef_t *)I2C2_BASEADDR)
 #define I2C3						((I2C_RegDef_t *)I2C3_BASEADDR)
 
+#define USART1						((USART_RegDef_t *)USART1_BASEADDR)
+#define USART2						((USART_RegDef_t *)USART2_BASEADDR)
+#define USART3						((USART_RegDef_t *)USART3_BASEADDR)
+#define UART4						((USART_RegDef_t *)UART4_BASEADDR)
+#define UART5						((USART_RegDef_t *)UART5_BASEADDR)
+#define USART6						((USART_RegDef_t *)USART6_BASEADDR)
+
+
 /*
  * Clock Enable Macros for GPIOx peripherals
  */
@@ -322,6 +330,7 @@ typedef struct
  * Clock Enable Macros for USARTx peripherals
  */
 
+#define USART1_PCLK_EN()			( RCC->APB2ENR |= (1<<4) )
 #define USART2_PCLK_EN()			( RCC->APB1ENR |= (1<<17) )
 #define USART3_PCLK_EN()			( RCC->APB1ENR |= (1<<18) )
 #define UART4_PCLK_EN()				( RCC->APB1ENR |= (1<<19) )
@@ -372,6 +381,7 @@ typedef struct
  * Clock Disable Macros for USARTx peripherals
  */
 
+#define USART1_PCLK_DI()			( RCC->APB2ENR &= ~(1<<4) )
 #define USART2_PCLK_DI()			( RCC->APB1ENR &= ~(1<<17) )
 #define USART3_PCLK_DI()			( RCC->APB1ENR &= ~(1<<18) )
 #define UART4_PCLK_DI()				( RCC->APB1ENR &= ~(1<<19) )
@@ -668,6 +678,7 @@ typedef struct
 #include "stm32f407xx_gpio_driver.h"  //these include help us when writing codes in application layer. bcs we dont need to include them in the appl. layer anymore
 #include "stm32f407xx_spi_driver.h"
 #include "stm32f407xx_i2c_driver.h"
+#include "stm32f407xx_usart_driver.h"
 
 
 

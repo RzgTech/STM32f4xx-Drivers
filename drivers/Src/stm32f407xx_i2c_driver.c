@@ -125,7 +125,7 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi)
 		//pI2cBaseAddress->CR1 |= I2C_CR1_PE_Bit_Mask;
 	}else
 	{
-		pI2Cx->CR1 &= ~(1 << 0);
+		pI2Cx->CR1 &= ~(1 << I2C_CR1_PE);
 	}
 
 }
