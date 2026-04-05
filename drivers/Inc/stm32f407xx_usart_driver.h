@@ -27,6 +27,13 @@ typedef struct
 {
 	USART_Config_t USART_Config;
 	USART_RegDef_t *pUSARTx;
+	uint8_t *pTxBuffer;
+	uint8_t *pRxBuffer;
+	uint32_t TxLen;
+	uint32_t RxLen;
+	uint8_t TxBusyState;
+	uint8_t RxBusyState;
+
 }USART_Handle_t;
 
 /*
@@ -93,6 +100,13 @@ typedef struct
 #define USART_FLAG_TXE						(1 << USART_SR_TXE)
 #define USART_FLAG_TC						(1 << USART_SR_TC)
 #define USART_FLAG_RXNE						(1 << USART_SR_RXNE)
+
+/*
+ * Application states
+ */
+#define USART_BUSY_IN_RX 					1
+#define USART_BUSY_IN_TX 					2
+#define USART_READY 						0
 
 
 /******************************************************************************************

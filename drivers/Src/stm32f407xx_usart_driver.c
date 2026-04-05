@@ -8,7 +8,6 @@
 #include "stm32f407xx.h"
 #include "stm32f407xx_usart_driver.h"
 
-
 /*********************************************************************
  * @fn      		  - USART_PeriClockControl
  *
@@ -173,6 +172,32 @@ void USART_Init(USART_Handle_t *pUSARTHandle)
 	//Implement the code to configure the baud rate
 	//We will cover this in the lecture. No action required here
 
+}
+
+/*********************************************************************
+ * @fn      		  - USART_PeripheralControl
+ *
+ * @brief             -
+ *
+ * @param[in]         -
+ * @param[in]         -
+ * @param[in]         -
+ *
+ * @return            -
+ *
+ * @Note              -
+
+ */
+void USART_PeripheralControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi)
+{
+	if(EnOrDi == ENABLE)
+	{
+		pUSARTx->CR1 |= (1 << USART_CR1_UE);
+
+	}else
+	{
+		pUSARTx->CR1 &= ~(1 << USART_CR1_UE);
+	}
 }
 
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len)
@@ -354,7 +379,7 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
 }
 
 /*********************************************************************
- * @fn      		  - USART_PeripheralControl
+ * @fn      		  - USART_SendDataWithIT
  *
  * @brief             -
  *
@@ -367,17 +392,60 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority)
  * @Note              -
 
  */
-void USART_PeripheralControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi)
+uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len)
 {
-	if(EnOrDi == ENABLE)
-	{
-		pUSARTx->CR1 |= (1 << USART_CR1_UE);
+	uint8_t txstate = pUSARTHandle->TxBusyState;
 
-	}else
+	if(txstate != USART_BUSY_IN_TX)
 	{
-		pUSARTx->CR1 &= ~(1 << USART_CR1_UE);
+		pUSARTHandle->TxLen = Len;
+		pUSARTHandle->pTxBuffer = pTxBuffer;
+		pUSARTHandle->TxBusyState = USART_BUSY_IN_TX;
+
+		//Implement the code to enable interrupt for TXE
+		pUSARTHandle->pUSARTx->CR1 |= (1 << USART_CR1_TXEIE);
+
+
+		//Implement the code to enable interrupt for TC
+		pUSARTHandle->pUSARTx->CR1 |= (1 << USART_CR1_TCIE);
 	}
+
+	return txstate;
 }
+
+/*********************************************************************
+ * @fn      		  - USART_ReceiveDataWithIT
+ *
+ * @brief             -
+ *
+ * @param[in]         -
+ * @param[in]         -
+ * @param[in]         -
+ *
+ * @return            -
+ *
+ * @Note              -
+
+ */
+uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len)
+{
+	uint8_t rxstate = pUSARTHandle->RxBusyState;
+
+	if(rxstate != USART_BUSY_IN_RX)
+	{
+		pUSARTHandle->RxLen = Len;
+		pUSARTHandle->pRxBuffer = pRxBuffer;
+		pUSARTHandle->RxBusyState = USART_BUSY_IN_RX;
+
+		//Implement the code to enable interrupt for RXNE
+		pUSARTHandle->pUSARTx->CR1 |= (1 << USART_CR1_RXNEIE);
+
+	}
+
+	return rxstate;
+}
+
+
 
 /*********************************************************************
  * @fn      		  - USART_GetFlagStatus
