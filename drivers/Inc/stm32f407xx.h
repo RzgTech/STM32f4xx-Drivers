@@ -612,16 +612,16 @@ typedef struct
 /*
  * Bit position definitions USART_SR
  */
-#define I2C_SR_PE						 0
-#define I2C_SR_FE						 1
-#define I2C_SR_NF						 2
-#define I2C_SR_ORE						 3
-#define I2C_SR_IDLE						 4
-#define I2C_SR_RXNE						 5
-#define I2C_SR_TC						 6
-#define I2C_SR_TXE						 7
-#define I2C_SR_LBD						 8
-#define I2C_SR_CTS						 9
+#define USART_SR_PE						 0
+#define USART_SR_FE						 1
+#define USART_SR_NF						 2
+#define USART_SR_ORE					 3
+#define USART_SR_IDLE					 4
+#define USART_SR_RXNE					 5
+#define USART_SR_TC						 6
+#define USART_SR_TXE					 7
+#define USART_SR_LBD					 8
+#define USART_SR_CTS					 9
 
 /*
  * Bit position definitions USART_CR1

@@ -8,7 +8,7 @@
 #ifndef INC_STM32F407XX_USART_DRIVER_H_
 #define INC_STM32F407XX_USART_DRIVER_H_
 
-#include<stdint.h>
+#include "stm32f407xx.h"
 
 /*
  * configuration structure for USARTx peripheral
@@ -87,6 +87,13 @@ typedef struct
 #define USART_HW_FLOW_CTRL_RTS    			2
 #define USART_HW_FLOW_CTRL_CTS_RTS			3
 
+/*
+ * USART related status flags definitions
+ */
+#define USART_FLAG_TXE						(1 << USART_SR_TXE)
+#define USART_FLAG_TC						(1 << USART_SR_TC)
+#define USART_FLAG_RXNE						(1 << USART_SR_RXNE)
+
 
 /******************************************************************************************
  *								APIs supported by this driver
@@ -107,8 +114,8 @@ void USART_DeInit(USART_RegDef_t *pUSARTx);
 /*
  * Data Send and Receive
  */
-void USART_SendData(USART_RegDef_t *pUSARTx,uint8_t *pTxBuffer, uint32_t Len);
-void USART_ReceiveData(USART_RegDef_t *pUSARTx, uint8_t *pRxBuffer, uint32_t Len);
+void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len);
+void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);
 uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle,uint8_t *pTxBuffer, uint32_t Len);
 uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);
 
