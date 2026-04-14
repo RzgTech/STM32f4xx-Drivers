@@ -280,8 +280,7 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 	for (uint32_t i = 0; i < Len; i++)
 	{
 		// Implement the code to wait until TXE flag is set in the SR
-		while (!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USART_FLAG_TXE))
-			;
+		while (!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USART_FLAG_TXE));
 
 		// Check the USART_WordLength item for 9BIT or 8BIT in a frame
 		if (pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_9BITS)
