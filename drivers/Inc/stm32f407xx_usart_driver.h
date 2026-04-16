@@ -108,6 +108,19 @@ typedef struct
 #define USART_BUSY_IN_TX 					2
 #define USART_READY 						0
 
+/*
+ * USART application events macros
+ */
+#define USART_EVENT_TX_CMPLT				1
+#define USART_EVENT_RX_CMPLT				2
+#define USART_EVENT_CTS						3
+#define USART_EVENT_IDLE					4
+#define USART_EVENT_ORE						5
+#define USART_ERREVENT_FE					6
+#define USART_ERREVENT_NF					7
+#define USART_ERREVENT_ORE					8
+
+
 
 /******************************************************************************************
  *								APIs supported by this driver
