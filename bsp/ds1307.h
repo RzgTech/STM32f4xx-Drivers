@@ -16,7 +16,7 @@
 #define DS1307_I2C_SDA_PIN					GPIO_PIN_NO_7
 #define DS1307_I2C_SCL_PIN					GPIO_PIN_NO_6
 #define DS1307_I2C_SCL_SPEED				I2C_SCLSpeed_SM   //you cannot change it to FM bcs the device does not support it (max scl is 100 khz based on its datasheet)
-#define DS1307_I2C_PUPD						GPIO_NO_PUPD  //no internal pull-ups
+#define DS1307_I2C_PUPD						GPIO_PIN_PU
 
 /*Register addresses*/
 #define DS1307_ADDR_SEC						0x00
