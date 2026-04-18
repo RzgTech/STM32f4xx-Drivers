@@ -43,15 +43,15 @@ uint8_t ds1307_init(void)
 void ds1307_set_current_time(RTC_time_t *rtc_time)
 {
 	uint8_t seconds, hrs;
-	seconds = binary_to_bcs(rtc_time->seconds);
+	seconds = binary_to_bcd(rtc_time->seconds);
 
 	//making sure that the 7th bit of seconds register (CH bit) is 0 (O.W the RTC is halted)
 	seconds &= ~(1<<7);
 	ds1307_write(seconds, DS1307_ADDR_SEC);
 
-	ds1307_write(binary_to_bcs(rtc_time->minutes), DS1307_ADDR_MIN);
+	ds1307_write(binary_to_bcd(rtc_time->minutes), DS1307_ADDR_MIN);
 
-	hrs = binary_to_bcs(rtc_time->hours);
+	hrs = binary_to_bcd(rtc_time->hours);
 	if (rtc_time->time_format == TIME_FORMAT_24HRS)
 	{
 		hrs &= ~(1 << 6);
@@ -68,11 +68,37 @@ void ds1307_set_current_time(RTC_time_t *rtc_time)
 
 void ds1307_get_current_time(RTC_time_t *rtc_time)
 {
+	uint8_t seconds;
+	seconds = ds1307_read(DS1307_ADDR_SEC);
+
+	seconds &= ~(1 << 7);
+
+	rtc_time->seconds = bcd_to_binary(seconds);
+	rtc_time->minutes = bcd_to_binary(ds1307_read(DS1307_ADDR_MIN));
+
+	uint8_t hrs = ds1307_read(DS1307_ADDR_HRS);
+	if (hrs & (1 >> 6))
+	{
+		//12 hr format
+		rtc_time->time_format = !((hrs & (1 << 5)) == 0);
+		hrs &= ~(0x3 << 5); //clear 5th and 6th bits
+	}
+	else
+	{
+		//24 hr format
+		rtc_time->time_format = TIME_FORMAT_24HRS;
+	}
+
+	rtc_time->hours = bcd_to_binary(hrs);
 
 }
 
 void ds1307_set_current_date(RTC_date_t *rtc_date)
 {
+	ds1307_write(binary_to_bcd(rtc_date->date), DS1307_ADDR_DATE);
+	ds1307_write(binary_to_bcd(rtc_date->day), DS1307_ADDR_DAY);
+	ds1307_write(binary_to_bcd(rtc_date->month), DS1307_ADDR_MONTH);
+	ds1307_write(binary_to_bcd(rtc_date->year), DS1307_ADDR_YEAR);
 
 }
 
