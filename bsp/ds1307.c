@@ -37,7 +37,7 @@ uint8_t ds1307_init(void)
 	//5. Read back clock halt bit
 	uint8_t clock_state = ds1307_read(DS1307_ADDR_SEC);
 
-	return (clock_state >> 7) & (0x1);
+	return ((clock_state >> 7) & (0x1));
 
 
 
@@ -80,7 +80,7 @@ void ds1307_get_current_time(RTC_time_t *rtc_time)
 	rtc_time->minutes = bcd_to_binary(ds1307_read(DS1307_ADDR_MIN));
 
 	uint8_t hrs = ds1307_read(DS1307_ADDR_HRS);
-	if (hrs & (1 >> 6))
+	if (hrs & (1 << 6))
 	{
 		//12 hr format
 		rtc_time->time_format = !((hrs & (1 << 5)) == 0);

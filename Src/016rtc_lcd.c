@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include "ds1307.h"
 
+extern void initialise_monitor_handles(void);
+
 char* get_day_of_week(uint8_t i)
 {
 	char* days[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
@@ -54,7 +56,7 @@ char* date_to_string(RTC_date_t *rtc_date)
 	buf[2] = '/';
 	buf[5] = '/';
 
-	number_to_string(rtc_date->day, buf);
+	number_to_string(rtc_date->date, buf);
 	number_to_string(rtc_date->month, &buf[3]);
 	number_to_string(rtc_date->year, &buf[6]);
 
@@ -65,6 +67,7 @@ char* date_to_string(RTC_date_t *rtc_date)
 
 int main(void)
 {
+	initialise_monitor_handles();
 	RTC_time_t current_time;
 	RTC_date_t current_date;
 
@@ -77,8 +80,8 @@ int main(void)
 	}
 
 	current_date.day = SUNDAY;
-	current_date.date = 19;
-	current_date.month = 1;
+	current_date.date = 12;
+	current_date.month = 6;
 	current_date.year = 26;
 
 	current_time.hours = 4;
