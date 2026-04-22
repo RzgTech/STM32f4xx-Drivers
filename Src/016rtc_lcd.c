@@ -8,6 +8,30 @@
 #include "ds1307.h"
 
 extern void initialise_monitor_handles(void);
+#define SYSTICK_TIM_CLK 			16000000UL
+//this function initializes the systick timer registers to issue an interrupt for every 1 sec
+void init_systick_timer(uint32_t tick_hz)
+{
+	uint32_t *pSRVR = (uint32_t*)0xE000E014;
+	uint32_t *pSCSR = (uint32_t*)0xE000E010;
+
+    /* calculation of reload value */
+    uint32_t count_value = (SYSTICK_TIM_CLK/tick_hz)-1;
+
+    //Clear the value of SVR
+    *pSRVR &= ~(0x00FFFFFFFF);
+
+    //load the value in to SVR
+    *pSRVR |= count_value;
+
+    //do some settings
+    *pSCSR |= ( 1 << 1); //Enables SysTick exception request:
+    *pSCSR |= ( 1 << 2);  //Indicates the clock source, processor clock source
+
+    //enable the systick
+    *pSCSR |= ( 1 << 0); //enables the counter
+
+}
 
 char* get_day_of_week(uint8_t i)
 {
@@ -79,6 +103,8 @@ int main(void)
 		while(1);
 	}
 
+	init_systick_timer(1);  //1 interrupt for every one second
+
 	current_date.day = SUNDAY;
 	current_date.date = 12;
 	current_date.month = 6;
@@ -109,11 +135,31 @@ int main(void)
 	//15/01/21 <friday>
 	printf("Current date = %s <%s>\n", date_to_string(&current_date), get_day_of_week(current_date.day));
 
-
+	while(1);
 	return 0;
 }
 
 
+void SysTick_Handler(void)
+{
+	RTC_time_t current_time;
+	RTC_date_t current_date;
+	ds1307_get_current_time(&current_time);
 
+	char *am_pm;
+	if(current_time.time_format != TIME_FORMAT_24HRS)
+	{
+		am_pm = (current_time.time_format) ? "PM" : "AM";
+		printf("Current time = %s %s\n", time_to_string(&current_time), am_pm);  //04:25:41 PM
+	}
+	else
+	{
+		printf("Current time = %s\n", time_to_string(&current_time));  //04:25:41
+	}
+
+	ds1307_get_current_date(&current_date);
+	printf("Current date = %s <%s>\n", date_to_string(&current_date), get_day_of_week(current_date.day));
+
+}
 
 
