@@ -50,6 +50,44 @@ void lcd_init(void)
 	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D6, GPIO_PIN_RESET);
 	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D7, GPIO_PIN_RESET);
 
-	//2. Do the LCD initialization
+	//2. Do the LCD initialization  (based on HD44780U >> Initializing by Instruction >> 4bit interface figure)
+
+	mdelay(40);
+
+	/* RS = 0, for LCD command */
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RS, GPIO_PIN_RESET);
+
+	/* RW = 0, Writing to LCD*/
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RW, GPIO_PIN_RESET);
+
+	write_4_bits(0x3);
+
+	mdelay(5);
+
+	write_4_bits(0x3);
+
+	udelay(150);
+
+	write_4_bits(0x3);
+
+	write_4_bits(0x2);
+
+
+
 
 }
+
+
+/*writes 4 bits of data/command on to D4, D5, D6, D7 lines*/
+static void bwrite_4_bits(uint8_t value)
+{
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D4, (value >> 0) & 0x1);  //we mask to put each bit to the correct pin (ex. if you have 0011, 1 (lsb) should go to D4, the next 1, should go to D5 and ...)
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D5, (value >> 1) & 0x1);
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D6, (value >> 2) & 0x1);
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D7, (value >> 3) & 0x1);
+
+	lcd_enable(); //after writing on the data lines, we have to instruct the lcd to latch that data inside the lcd
+}
+
+
+
