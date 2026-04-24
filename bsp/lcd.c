@@ -9,6 +9,8 @@
 
 static void write_4_bits(uint8_t value);
 static void lcd_enable();
+static void mdelay(uint32_t cnt);
+static void udelay(uint32_t cnt);
 
 void lcd_send_command(uint8_t cmd)
 {
@@ -36,8 +38,8 @@ void lcd_send_char(uint8_t data)
 	/*R/w = 0, for write*/
 	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RW, GPIO_PIN_RESET);
 
-	write_4_bits(cmd >> 4); //higher nibble
-	write_4_bits(cmd & 0x0F); //lower nibble
+	write_4_bits(data >> 4); //higher nibble
+	write_4_bits(data & 0x0F); //lower nibble
 
 }
 
@@ -107,6 +109,17 @@ void lcd_init(void)
 	write_4_bits(0x2);
 
 
+	//function set command
+	write_4_bits(LCD_CMD_4DL_2N_5X8F);
+
+	//display on and cursor on
+	write_4_bits(LCD_CMD_DON_CURON);
+
+	//display clear
+	lcd_display_clear();
+
+	//entry mode set
+	write_4_bits(LCD_CMD_INCADD);
 
 
 }
@@ -123,6 +136,14 @@ static void write_4_bits(uint8_t value)
 	lcd_enable(); //after writing on the data lines, we have to instruct the lcd to latch that data inside the lcd
 }
 
+void lcd_display_clear()
+{
+	write_4_bits(LCD_CMD_DIS_CLEAR);
+
+	mdelay(2);
+
+}
+
 static void lcd_enable()
 {
 	//we need to do high to low transition on EN pin
@@ -133,5 +154,16 @@ static void lcd_enable()
 
 }
 
+static void mdelay(uint32_t cnt)
+{
+	for(uint32_t i=0; i < (cnt * 1000); i++);
+
+}
+
+static void udelay(uint32_t cnt)
+{
+	for(uint32_t i=0; i < (cnt * 1); i++);
+
+}
 
 

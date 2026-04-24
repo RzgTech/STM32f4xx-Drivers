@@ -13,6 +13,8 @@
 /* BSP exposed APIs*/
 void lcd_init(void);
 void lcd_send_command(uint8_t cmd);
+void lcd_send_char(uint8_t data);
+void lcd_display_clear();
 
 /*Application configurable items*/
 #define LCD_GPIO_PORT				GPIOD
@@ -23,6 +25,14 @@ void lcd_send_command(uint8_t cmd);
 #define LCD_GPIO_D5					GPIO_PIN_NO_4
 #define LCD_GPIO_D6					GPIO_PIN_NO_5
 #define LCD_GPIO_D7					GPIO_PIN_NO_6
+
+/*LCD commands*/
+
+#define LCD_CMD_4DL_2N_5X8F  		0x28  //4-bit data length, 2 lines and font size is 5*8
+#define LCD_CMD_DON_CURON    		0x0E  //Display on and cursor on
+#define LCD_CMD_INCADD       		0x06  //increment the RAM address
+#define LCD_CMD_DIS_CLEAR    		0X01  //display clear
+#define LCD_CMD_DIS_RETURN_HOME  	0x02  //display return home
 
 
 
