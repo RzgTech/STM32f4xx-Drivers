@@ -7,6 +7,40 @@
 
 #include "lcd.h"
 
+static void write_4_bits(uint8_t value);
+static void lcd_enable();
+
+void lcd_send_command(uint8_t cmd)
+{
+	/* RS = 0 for LCD command*/
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RS, GPIO_PIN_RESET);
+
+	/*R/w = 0, for write*/
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RW, GPIO_PIN_RESET);
+
+	write_4_bits(cmd >> 4); //higher nibble
+	write_4_bits(cmd & 0x0F);  //lower nibble
+}
+
+/*
+ *This function sends a character to the LCD
+ *Here we used 4 bit parallel data transmission.
+ *First higher nibble of the data will be sent on to the data lines D4,D5,D6,D7
+ *Then lower nibble of the data will be set on to the data lines D4,D5,D6,D7
+ */
+void lcd_send_char(uint8_t data)
+{
+	/* RS = 1 for LCD user data*/
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RS, GPIO_PIN_SET);
+
+	/*R/w = 0, for write*/
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_RW, GPIO_PIN_RESET);
+
+	write_4_bits(cmd >> 4); //higher nibble
+	write_4_bits(cmd & 0x0F); //lower nibble
+
+}
+
 void lcd_init(void)
 {
 	//1. Configure GPIO pins which are used for lcd connections
@@ -79,7 +113,7 @@ void lcd_init(void)
 
 
 /*writes 4 bits of data/command on to D4, D5, D6, D7 lines*/
-static void bwrite_4_bits(uint8_t value)
+static void write_4_bits(uint8_t value)
 {
 	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D4, (value >> 0) & 0x1);  //we mask to put each bit to the correct pin (ex. if you have 0011, 1 (lsb) should go to D4, the next 1, should go to D5 and ...)
 	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D5, (value >> 1) & 0x1);
@@ -87,6 +121,16 @@ static void bwrite_4_bits(uint8_t value)
 	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_D7, (value >> 3) & 0x1);
 
 	lcd_enable(); //after writing on the data lines, we have to instruct the lcd to latch that data inside the lcd
+}
+
+static void lcd_enable()
+{
+	//we need to do high to low transition on EN pin
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_EN, GPIO_PIN_SET);
+	udelay(10);
+	GPIO_WriteToOutputPin(LCD_GPIO_PORT, LCD_GPIO_EN, GPIO_PIN_RESET);
+	udelay(100);   //execution time > 37 micro seconds (based on datasheet>>Instructions, it is at least 37 us)
+
 }
 
 
